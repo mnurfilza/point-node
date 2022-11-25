@@ -6,6 +6,13 @@ module.exports = (sequelize, DataTypes, projectCode) => {
       this.belongsTo(models.PurchaseInvoice, { as: 'purchaseInvoice', foreignKey: 'purchaseInvoiceId' });
 
       this.belongsTo(models.Supplier, { as: 'supplier', foreignKey: 'supplierId' });
+
+      this.hasOne(models.Form, {
+        as: 'form',
+        foreignKey: 'formableId',
+        constraints: false,
+        scope: { formable_type: 'PurchaseReturn' },
+      });
     }
   }
   PurchaseReturn.init(

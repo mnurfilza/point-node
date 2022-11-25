@@ -58,6 +58,7 @@ const modelPaths = [
   '/purchase/models/purchaseInvoice.model.js',
   '/purchase/models/purchaseInvoiceOther.model.js',
   '/purchase/models/purchaseReturn.model.js',
+  '/purchase/models/purchaseReturnItem.model.js',
   // purchase/paymentOrder
   '/purchase/paymentOrder/models/paymentOrder.model.js',
   '/purchase/paymentOrder/models/paymentOrderDownPayment.model.js',
@@ -90,7 +91,7 @@ async function addOrFindNewProjectDatabase (db, projectCode) {
   if (db[projectCode]) {
     return db[projectCode]
   }
-  
+
   db[projectCode] = {};
   const configDbTenant = generateConfigNewDatabase(projectCode)
   const newDatabaseSequelize = new Sequelize(
@@ -119,7 +120,7 @@ async function addOrFindNewProjectDatabase (db, projectCode) {
 function generateConfigNewDatabase (projectCode) {
   const configDbTenant = config.databases.tenant;
   const database = `${process.env.DATABASE_NAME}_${projectCode}`;
-  
+
   return {
     ...configDbTenant,
     database,

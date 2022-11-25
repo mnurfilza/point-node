@@ -17,11 +17,10 @@ module.exports = async function setupDatabase(req, res, next) {
 
     const project = await Project.findOne({ where: { code: tenant } });
     if (!project) {
-      return next(new ApiError(httpStatus.NOT_FOUND, 'Tenant project is not exist'));
+      return next(new ApiError(httpStatus.NOT_FOUND, '  Tenant project is not exist'));
     }
 
     const currentTenantDatabase = await tenantModels.addOrFindNewProjectDatabase(database, project.code);
-
     req.currentTenantDatabase = currentTenantDatabase;
 
     next();
