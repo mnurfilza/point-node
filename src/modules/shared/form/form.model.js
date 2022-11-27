@@ -35,6 +35,10 @@ module.exports = (sequelize, DataTypes, projectCode) => {
 
       this.belongsTo(models.InventoryAudit, { as: 'inventoryAudit', foreignKey: 'formableId', constraints: false });
 
+      this.belongsTo(models.PurchaseInvoice, { as: 'purchaseInvoice', foreignKey: 'formableId', constraints: false });
+
+      this.belongsTo(models.PurchaseReceive, { as: 'purchaseReceive', foreignKey: 'formableId', constraints: false });
+
       this.hasOne(models.SalesVisitation, { as: 'salesVisitation', foreignKey: 'formId' });
     }
 

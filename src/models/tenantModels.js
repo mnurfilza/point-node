@@ -59,6 +59,8 @@ const modelPaths = [
   '/purchase/models/purchaseInvoiceOther.model.js',
   '/purchase/models/purchaseReturn.model.js',
   '/purchase/models/purchaseReturnItem.model.js',
+  '/purchase/models/purchaseInvoiceItem.model.js',
+  '/purchase/models/purchaseReceive.model.js',
   // purchase/paymentOrder
   '/purchase/paymentOrder/models/paymentOrder.model.js',
   '/purchase/paymentOrder/models/paymentOrderDownPayment.model.js',

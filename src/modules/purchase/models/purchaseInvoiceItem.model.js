@@ -1,20 +1,23 @@
 const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes, projectCode) => {
-  class PurchaseReturnItems extends Model {
+  class PurchaseInvoiceItem extends Model {
     static associate({ [projectCode]: models }) {
-      this.belongsTo(models.PurchaseReturn, { as: 'purchaseReturn', foreignKey: 'purchaseReturnId' });
-      this.belongsTo(models.PurchaseInvoiceItem, { as: 'purchaseInvoiceItem', foreignKey: 'purchaseInvoiceItemId' });
-      this.belongsTo(models.Allocation, { as: 'allocation', foreignKey: 'allocationId' });
+      this.belongsTo(models.PurchaseInvoice, { as: 'purchaseInvoice', foreignKey: 'purchaseInvoiceId' });
+      this.belongsTo(models.PurchaseReceive, { as: 'purchaseReceive', foreignKey: 'purchaseReceiveId' });
+      this.hasMany(models.PurchaseReturnItems, { as: 'purchaseReturnItems', foreignKey: 'purchaseInvoiceItemId' });
     }
   }
 
-  PurchaseReturnItems.init(
+  PurchaseInvoiceItem.init(
     {
-      purchaseReturnId: {
+      purchaseInvoiceId: {
         type: DataTypes.INTEGER,
       },
-      purchaseInvoiceItemId: {
+      purchaseReceiveId: {
+        type: DataTypes.INTEGER,
+      },
+      purchaseReceiveItemId: {
         type: DataTypes.INTEGER,
       },
       itemId: {
@@ -24,9 +27,6 @@ module.exports = (sequelize, DataTypes, projectCode) => {
         type: DataTypes.STRING,
       },
       quantity: {
-        type: DataTypes.DECIMAL,
-      },
-      quantityInvoice: {
         type: DataTypes.DECIMAL,
       },
       price: {
@@ -47,6 +47,9 @@ module.exports = (sequelize, DataTypes, projectCode) => {
       notes: {
         type: DataTypes.STRING,
       },
+      taxable: {
+        type: DataTypes.INTEGER,
+      },
       allocationId: {
         type: DataTypes.INTEGER,
       },
@@ -60,11 +63,11 @@ module.exports = (sequelize, DataTypes, projectCode) => {
     {
       hooks: {},
       sequelize,
-      modelName: 'PurchaseReturnItems',
-      tableName: 'purchase_return_items',
+      modelName: 'PurchaseInvoiceItem',
+      tableName: 'purchase_invoice_items',
       underscored: true,
       timestamps: false,
     }
   );
-  return PurchaseReturnItems;
+  return PurchaseInvoiceItem;
 };
