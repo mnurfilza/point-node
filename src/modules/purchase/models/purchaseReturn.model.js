@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes, projectCode) => {
   class PurchaseReturn extends Model {
     static associate({ [projectCode]: models }) {
       this.belongsTo(models.PurchaseInvoice, { as: 'purchaseInvoice', foreignKey: 'purchaseInvoiceId' });
-
+      this.belongsTo(models.Warehouse, { as: 'warehouse', foreignKey: 'warehouseId' });
       this.belongsTo(models.Supplier, { as: 'supplier', foreignKey: 'supplierId' });
 
       this.hasOne(models.Form, {
@@ -18,6 +18,9 @@ module.exports = (sequelize, DataTypes, projectCode) => {
   PurchaseReturn.init(
     {
       purchaseInvoiceId: {
+        type: DataTypes.INTEGER,
+      },
+      warehouseId: {
         type: DataTypes.INTEGER,
       },
       supplierId: {

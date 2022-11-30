@@ -10,9 +10,12 @@ class CreatePurchaseReturns {
 
   // eslint-disable-next-line no-empty-function
   async call() {
-    const { items, supplierName, supplierId, tax, notes, approver, purchaseInvoiceId } = this.createPurchaseReturnDto;
+    const { items, supplierName, supplierId, tax, notes, approver, purchaseInvoiceId, warehouseId } = this.createPurchaseReturnDto;
     const currentDate = new Date(Date.now());
-    await validate(this.tenantDatabase, this.maker, this.createPurchaseReturnDto);
+    const warehouse = await this.tenantDatabase.Warehouse.findOne({
+      where: { id: warehouseId },
+    });
+    await validate(this.tenantDatabase, this.maker, this.createPurchaseReturnDto, warehouse);
     // eslint-disable-next-line no-console
     const { incrementNumber, incrementGroup } = await getFormIncrement(this.tenantDatabase, currentDate);
     const randNum = await generateFormNumber(currentDate, incrementNumber);
@@ -22,6 +25,7 @@ class CreatePurchaseReturns {
       const purchaseReturn = await this.tenantDatabase.PurchaseReturn.create(
         {
           purchaseInvoiceId,
+          warehouseId,
           supplierId,
           supplierName,
           tax,
@@ -36,7 +40,7 @@ class CreatePurchaseReturns {
           number: randNum,
           done: 0,
           approvalStatus: 0,
-          created_at: currentDate,
+          createdAt: currentDate,
           notes,
           createdBy: this.maker.id,
           updatedBy: this.maker.id,
@@ -54,14 +58,20 @@ class CreatePurchaseReturns {
           this.tenantDatabase.PurchaseReturnItems.create(
             {
               purchaseReturnId: purchaseReturn.id,
-              itemId: val.id,
-              itemName: val.item,
+              purchaseInvoiceItemId: val.purchaseInvoiceItemId,
+              itemId: val.itemId,
+              itemName: val.itemName,
               quantity: val.qtyReturn,
+              quantityInvoice: val.qtyInvoice,
               price: val.price,
               discountValue: val.disc,
+              discountPercent: val.discountPercent,
               unit: val.unitConverterReturn,
               notes: val.notes,
-              converter: 0,
+              converter: val.converter,
+              allocationId: val.allocationId,
+              ...(val.expiryDate && { expiryDate: val.expiryDate }),
+              ...(val.productionNumber && { productionNumber: val.productionNumber }),
             },
             { transaction }
           )
@@ -115,7 +125,7 @@ function formatDate(date) {
   return [padTo2Digits(date.getMonth() + 1), padTo2Digits(date.getDate()), date.getFullYear()].join('/');
 }
 
-async function validate(tenantDatabase, maker, createPurchaseReturnDto) {
+async function validate(tenantDatabase, maker, createPurchaseReturnDto, warehouse) {
   const { purchaseInvoiceId, items, subTotal, taxbase, tax } = createPurchaseReturnDto;
 
   if (maker.modelHasRole == null) {
@@ -137,14 +147,14 @@ async function validate(tenantDatabase, maker, createPurchaseReturnDto) {
   }
 
   const isDefault = await tenantDatabase.BranchUser.findOne({
-    where: { user_id: maker.id, branch_id: maker.branchId },
+    where: { userId: maker.id, branchId: warehouse.branchId },
   });
 
   if (!isDefault) {
     throw new ApiError(httpStatus.NOT_FOUND, `user doesnt have branch`);
   }
 
-  if (!isDefault.is_default) {
+  if (!isDefault.isDefault) {
     throw new ApiError(httpStatus.UNPROCESSABLE_ENTITY, 'please set default branch to create this form');
   }
 

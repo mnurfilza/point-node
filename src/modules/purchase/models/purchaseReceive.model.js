@@ -1,20 +1,20 @@
 const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes, projectCode) => {
-  class PurchaseInvoice extends Model {
+  class PurchaseReceive extends Model {
     static associate({ [projectCode]: models }) {
       this.belongsTo(models.Supplier, { as: 'supplier', foreignKey: 'supplierId' });
-      this.hasMany(models.PurchaseInvoiceItem, { as: 'items', foreignKey: 'purchaseInvoiceId' });
-      this.hasMany(models.PaymentOrderInvoice, { as: 'paymentOrderInvoice', foreignKey: 'purchaseInvoiceId' });
+      this.belongsTo(models.Warehouse, { as: 'warehouse', foreignKey: 'warehouseId' });
+      this.hasMany(models.PurchaseInvoiceItem, { as: 'purchaseInvoiceItems', foreignKey: 'purchaseReceiveId' });
       this.hasOne(models.Form, {
         as: 'form',
         foreignKey: 'formableId',
         constraints: false,
-        scope: { formable_type: 'PurchaseInvoice' },
+        scope: { formable_type: 'PurchaseReceive' },
       });
     }
   }
-  PurchaseInvoice.init(
+  PurchaseReceive.init(
     {
       supplierId: {
         type: DataTypes.INTEGER,
@@ -26,9 +26,6 @@ module.exports = (sequelize, DataTypes, projectCode) => {
         type: DataTypes.STRING,
       },
       supplierPhone: {
-        type: DataTypes.STRING,
-      },
-      invoiceNumber: {
         type: DataTypes.STRING,
       },
       billingAddress: {
@@ -49,39 +46,30 @@ module.exports = (sequelize, DataTypes, projectCode) => {
       shippingEmail: {
         type: DataTypes.STRING,
       },
-      dueDate: {
-        type: DataTypes.DATE,
+      warehouseId: {
+        type: DataTypes.INTEGER,
       },
-      deliveryFee: {
-        type: DataTypes.DECIMAL,
-      },
-      discountPercent: {
-        type: DataTypes.DECIMAL,
-      },
-      discountValue: {
-        type: DataTypes.DECIMAL,
-      },
-      typeOfTax: {
+      warehouseName: {
         type: DataTypes.STRING,
       },
-      tax: {
-        type: DataTypes.DECIMAL,
+      purchaseOrderId: {
+        type: DataTypes.INTEGER,
       },
-      amount: {
-        type: DataTypes.DECIMAL,
+      driver: {
+        type: DataTypes.STRING,
       },
-      remaining: {
-        type: DataTypes.DECIMAL,
+      licensePlate: {
+        type: DataTypes.STRING,
       },
     },
     {
       hooks: {},
       sequelize,
-      modelName: 'PurchaseInvoice',
-      tableName: 'purchase_invoices',
+      modelName: 'PurchaseReceive',
+      tableName: 'purchase_receives',
       underscored: true,
       timestamps: false,
     }
   );
-  return PurchaseInvoice;
+  return PurchaseReceive;
 };
