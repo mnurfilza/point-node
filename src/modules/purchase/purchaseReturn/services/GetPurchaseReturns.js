@@ -13,7 +13,10 @@ class GetPurchaseReturns {
 
     const purhcaseRt = await this.tenantDatabase.PurchaseReturn.findOne({
       where: { id: this.purchaseReturnId },
-      include: [{ model: this.tenantDatabase.Form, as: 'form' }],
+      include: [
+        { model: this.tenantDatabase.Form, as: 'form' },
+        { model: this.tenantDatabase.PurchaseReturnItems, as: 'items' },
+      ],
     });
     return purhcaseRt;
   }

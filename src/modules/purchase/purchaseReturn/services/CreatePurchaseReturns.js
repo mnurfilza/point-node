@@ -10,7 +10,8 @@ class CreatePurchaseReturns {
 
   // eslint-disable-next-line no-empty-function
   async call() {
-    const { items, supplierName, supplierId, tax, notes, approver, purchaseInvoiceId, warehouseId } = this.createPurchaseReturnDto;
+    const { items, supplierName, supplierId, tax, notes, approver, purchaseInvoiceId, warehouseId } =
+      this.createPurchaseReturnDto;
     const currentDate = new Date(Date.now());
     const warehouse = await this.tenantDatabase.Warehouse.findOne({
       where: { id: warehouseId },
