@@ -15,25 +15,35 @@ class GetPurchaseReturns {
       where: { id: this.purchaseReturnId },
       include: [
         { model: this.tenantDatabase.Form, as: 'form' },
-        { model: this.tenantDatabase.PurchaseReturnItems, as: 'items' },
+        { model: this.tenantDatabase.PurchaseReturnItems, as: 'purchaseReturnItems' },
       ],
     });
+
     return purhcaseRt;
   }
 }
 
 async function validate(tenantDatabase, maker) {
+  const userWarehouse = await tenantDatabase.UserWarehouse.findOne({
+    where: { user_id: maker.id },
+  });
+
+  const warehouse = await tenantDatabase.Warehouse.findOne({
+    where: { id: userWarehouse.warehouseId },
+  });
+
   const isDefault = await tenantDatabase.BranchUser.findOne({
-    where: { user_id: maker.id, branch_id: maker.branchId },
+    where: { user_id: maker.id, branch_id: warehouse.branchId },
   });
 
   if (!isDefault) {
     throw new ApiError(httpStatus.NOT_FOUND, `user doesnt have branch`);
   }
 
-  if (!isDefault.is_default) {
+  if (isDefault.is_default) {
     throw new ApiError(httpStatus.UNPROCESSABLE_ENTITY, 'please set default branch to create this form');
   }
+
   const promisedAll = [];
   const rolePermissions = await tenantDatabase.RoleHasPermission.findAll({ where: { role_id: maker.modelHasRole.roleId } });
   rolePermissions.forEach((val) => {
@@ -45,7 +55,7 @@ async function validate(tenantDatabase, maker) {
   });
 
   if (!permision) {
-    throw new ApiError(httpStatus.FORBIDDEN, 'There is no permission named `create purchase return` for guard `api`.');
+    throw new ApiError(httpStatus.FORBIDDEN, 'There is no permission named `get purchase return` for guard `api`.');
   }
 }
 

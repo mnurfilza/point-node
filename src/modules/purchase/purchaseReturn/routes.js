@@ -17,5 +17,7 @@ router
   );
 
 // GET PURCHASE RETURN
-router.route('/:purchaseReturnId').get(controller.findPurchaseReturns);
+router.route('/:purchaseReturnId').get(celebrate(requestValidations.requireAuth), auth(), controller.findPurchaseReturns);
+router.route('/').get(celebrate(requestValidations.requireAuth), auth(), controller.findAllPurchaseReturns);
+
 module.exports = router;

@@ -17,11 +17,28 @@ const findPurchaseReturns = catchAsync(async (req, res) => {
     user: maker,
     params: { purchaseReturnId },
   } = req;
+
   const findPurchasreReturnResponse = await new services.GetPurchaseReturn(currentTenantDatabase, {
     maker,
     purchaseReturnId,
   }).call();
-  res.status(httpStatus.OK).send({ message: 'Success', data: findPurchasreReturnResponse });
+  res.status(httpStatus.OK).send({ message: 'Success', findPurchasreReturnResponse });
 });
 
-module.exports = { createPurchaseReturn, findPurchaseReturns };
+const findAllPurchaseReturns = catchAsync(async (req, res) => {
+  const { currentTenantDatabase, query: queries } = req;
+  const { data, maxItem, currentPage, totalPage, total } = await new services.GetListPurchaseReturn(
+    currentTenantDatabase,
+    queries
+  ).call();
+  res.status(httpStatus.OK).send({
+    data,
+    meta: {
+      current_page: currentPage,
+      last_page: totalPage,
+      per_page: maxItem,
+      total,
+    },
+  });
+});
+module.exports = { createPurchaseReturn, findPurchaseReturns, findAllPurchaseReturns };

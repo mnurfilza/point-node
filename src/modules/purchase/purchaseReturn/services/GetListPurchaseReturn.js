@@ -9,17 +9,16 @@ class GetListPurchaseReturn {
   async call() {
     // show list purchase return
     const [queryLimit, queryPage] = [parseInt(this.queries.limit, 10) || 10, parseInt(this.queries.page, 10) || 1];
-    const list = this.tenantDatabase.PurchaseReturn.findAll({
-      where: getQueryParams(this.queries),
-      order: ['id', 'ASC'],
-      include: [
-        { model: this.tenantDatabase.Form, as: 'form' },
-        { model: this.tenantDatabase.PurchaseReturnItems, as: 'items' },
-      ],
+
+    const { count: total, rows: data } = await this.tenantDatabase.PurchaseReturn.findAndCountAll({
+      order: [['id', 'ASC']],
+      include: [{ model: this.tenantDatabase.Form, as: 'form', where: getQueryParams(this.queries) }],
       limit: queryLimit,
       offset: offsetParams(queryPage, queryLimit),
     });
-    return list;
+    const totalPage = Math.ceil(total / parseInt(queryLimit, 10));
+
+    return { data, maxItem: queryLimit, currentPage: queryPage, totalPage, total };
   }
 }
 
@@ -30,8 +29,8 @@ function getQueryParams(queries) {
   const filterDoneForm = { done: queries.filter_form };
   filter[Op.and] = [...filter[Op.and], filterDoneForm];
 
-  // form done status
-  const statusApproval = { approvalStatus: queries.approval_status };
+  // form  status Approval
+  const statusApproval = { approval_status: queries.filter_approval };
   filter[Op.and] = [...filter[Op.and], statusApproval];
 
   // like

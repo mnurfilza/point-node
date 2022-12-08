@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes, projectCode) => {
         constraints: false,
         scope: { formable_type: 'PurchaseReturn' },
       });
+      this.hasMany(models.PurchaseReturnItems, { as: 'purchaseReturnItems', foreignKey: 'purchaseReturnId' });
     }
   }
   PurchaseReturn.init(
