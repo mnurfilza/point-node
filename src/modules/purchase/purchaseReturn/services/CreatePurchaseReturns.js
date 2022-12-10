@@ -10,7 +10,7 @@ class CreatePurchaseReturns {
 
   // eslint-disable-next-line no-empty-function
   async call() {
-    const { items, supplierName, supplierId, tax, notes, approver, purchaseInvoiceId, warehouseId } =
+    const { items, supplierName, supplierId, tax, notes, approver, purchaseInvoiceId, warehouseId, amount, remaining } =
       this.createPurchaseReturnDto;
     const currentDate = new Date(Date.now());
     const warehouse = await this.tenantDatabase.Warehouse.findOne({
@@ -21,15 +21,18 @@ class CreatePurchaseReturns {
     const { incrementNumber, incrementGroup } = await getFormIncrement(this.tenantDatabase, currentDate);
     const randNum = await generateFormNumber(currentDate, incrementNumber);
 
+    let purchaseReturn;
     await this.tenantDatabase.sequelize.transaction(async (transaction) => {
       const promisedAll = [];
-      const purchaseReturn = await this.tenantDatabase.PurchaseReturn.create(
+      purchaseReturn = await this.tenantDatabase.PurchaseReturn.create(
         {
           purchaseInvoiceId,
           warehouseId,
           supplierId,
           supplierName,
           tax,
+          amount,
+          remaining,
         },
         { transaction }
       );
@@ -83,6 +86,8 @@ class CreatePurchaseReturns {
         throw new ApiError(httpStatus.BAD_GATEWAY, `${e}`);
       });
     });
+
+    return purchaseReturn;
   }
 }
 
