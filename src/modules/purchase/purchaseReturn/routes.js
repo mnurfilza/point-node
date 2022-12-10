@@ -20,4 +20,8 @@ router
 router.route('/:purchaseReturnId').get(celebrate(requestValidations.requireAuth), auth(), controller.findPurchaseReturns);
 router.route('/').get(celebrate(requestValidations.requireAuth), auth(), controller.findAllPurchaseReturns);
 
+// soft delete
+router
+  .route('/:purchaseReturnId')
+  .delete(celebrate(requestValidations.requireAuth), auth(), controller.deletePurchaseReturn);
 module.exports = router;

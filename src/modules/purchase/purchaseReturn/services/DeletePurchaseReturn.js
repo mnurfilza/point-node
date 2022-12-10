@@ -2,23 +2,39 @@ const httpStatus = require('http-status');
 const ApiError = require('@src/utils/ApiError');
 
 class DeletePurchaseReturn {
-  constructor(tenantDatabase, { maker, deletePurchaseReturn, purchaseReturnId }) {
+  constructor(tenantDatabase, { maker, requestDeleteDto, purchaseReturnId }) {
     this.tenantDatabase = tenantDatabase;
     this.maker = maker;
-    this.deletePurchaseReturn = deletePurchaseReturn;
+    this.requestDeleteDto = requestDeleteDto;
     this.purchaseReturnId = purchaseReturnId;
   }
 
   async call() {
-    const { reasons } = this.deletePurchaseReturn;
-    await validate(this.tenantDatabase, this.purchaseReturnId, reasons);
+    const currentDate = new Date(Date.now());
+    const { reasons } = this.requestDeleteDto;
+
+    await validate(this.tenantDatabase, this.purchaseReturnId, reasons, this.maker);
+    const getApprover = await this.tenantDatabase.Form.findOne({
+      where: { formableId: this.purchaseReturnId },
+    });
+    const delReturn = await this.tenantDatabase.Form.update(
+      {
+        cancellationStatus: 0,
+        requestCancellationReason: reasons,
+        requestCancellationTo: getApprover.requestApprovalTo,
+        requestCancellationBy: this.maker.id,
+        requestCancellationAt: currentDate,
+      },
+      { where: { formableId: this.purchaseReturnId } }
+    );
+    return delReturn;
   }
 }
 
 async function validate(tenantDatabase, prtId, reason, maker) {
   const purhcaseRt = await tenantDatabase.PurchaseReturn.findOne({
     where: { id: prtId },
-    include: [{ model: this.tenantDatabase.Form, as: 'form' }],
+    include: [{ model: tenantDatabase.Form, as: 'form' }],
   });
 
   if (purhcaseRt.form.done) {
@@ -28,7 +44,6 @@ async function validate(tenantDatabase, prtId, reason, maker) {
   if (reason === '') {
     throw new ApiError(httpStatus.UNPROCESSABLE_ENTITY, 'The given data was invalid.');
   }
-
   if (maker.modelHasRole == null) {
     throw new ApiError(httpStatus.FORBIDDEN, 'There is no permission named `create purchase return` for guard `api`.');
   }
@@ -47,8 +62,8 @@ async function validate(tenantDatabase, prtId, reason, maker) {
     throw new ApiError(httpStatus.FORBIDDEN, 'There is no permission named `create purchase return` for guard `api`.');
   }
 
-  const warehouse = await this.tenantDatabase.Warehouse.findOne({
-    where: { id: purhcaseRt.warehouse_id },
+  const warehouse = await tenantDatabase.Warehouse.findOne({
+    where: { id: purhcaseRt.warehouseId },
   });
 
   const isDefault = await tenantDatabase.BranchUser.findOne({

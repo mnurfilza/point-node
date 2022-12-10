@@ -41,4 +41,21 @@ const findAllPurchaseReturns = catchAsync(async (req, res) => {
     },
   });
 });
-module.exports = { createPurchaseReturn, findPurchaseReturns, findAllPurchaseReturns };
+
+const deletePurchaseReturn = catchAsync(async (req, res) => {
+  const {
+    currentTenantDatabase,
+    user: maker,
+    body: requestDeleteDto,
+    params: { purchaseReturnId },
+  } = req;
+
+  const deletePurchaseReturnUsecase = await new services.DeletePurchaseReturn(currentTenantDatabase, {
+    maker,
+    requestDeleteDto,
+    purchaseReturnId,
+  }).call();
+
+  res.status(204).send({ message: 'Success', deletePurchaseReturnUsecase });
+});
+module.exports = { createPurchaseReturn, findPurchaseReturns, findAllPurchaseReturns, deletePurchaseReturn };
