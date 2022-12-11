@@ -18,11 +18,11 @@ const findPurchaseReturns = catchAsync(async (req, res) => {
     params: { purchaseReturnId },
   } = req;
 
-  const findPurchasreReturnResponse = await new services.GetPurchaseReturn(currentTenantDatabase, {
+  const data = await new services.GetPurchaseReturn(currentTenantDatabase, {
     maker,
     purchaseReturnId,
   }).call();
-  res.status(httpStatus.OK).send({ message: 'Success', findPurchasreReturnResponse });
+  res.status(httpStatus.OK).send({ message: 'Success', data });
 });
 
 const findAllPurchaseReturns = catchAsync(async (req, res) => {
