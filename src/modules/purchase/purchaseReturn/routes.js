@@ -24,4 +24,14 @@ router.route('/').get(celebrate(requestValidations.requireAuth), auth(), control
 router
   .route('/:purchaseReturnId')
   .delete(celebrate(requestValidations.requireAuth), auth(), controller.deletePurchaseReturn);
+
+// update
+router
+  .route('/:purchaseReturnId')
+  .put(
+    celebrate(requestValidations.requireAuth),
+    celebrate(requestValidations.updatePurchaseReturn),
+    auth(),
+    controller.updatePurchaseReturns
+  );
 module.exports = router;

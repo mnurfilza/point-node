@@ -5,7 +5,6 @@ module.exports = (sequelize, DataTypes, projectCode) => {
     static associate({ [projectCode]: models }) {
       this.belongsTo(models.Supplier, { as: 'supplier', foreignKey: 'supplierId' });
       this.hasMany(models.PurchaseInvoiceItem, { as: 'items', foreignKey: 'purchaseInvoiceId' });
-      this.hasMany(models.PaymentOrderInvoice, { as: 'paymentOrderInvoice', foreignKey: 'purchaseInvoiceId' });
       this.hasOne(models.Form, {
         as: 'form',
         foreignKey: 'formableId',

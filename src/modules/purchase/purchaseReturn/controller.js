@@ -58,4 +58,25 @@ const deletePurchaseReturn = catchAsync(async (req, res) => {
 
   res.status(204).send({ message: 'Success', deletePurchaseReturnUsecase });
 });
-module.exports = { createPurchaseReturn, findPurchaseReturns, findAllPurchaseReturns, deletePurchaseReturn };
+
+const updatePurchaseReturns = catchAsync(async (req, res) => {
+  const {
+    currentTenantDatabase,
+    user: maker,
+    body: updatePurchaseReturn,
+    params: { purchaseReturnId },
+  } = req;
+  const updatePrt = await new services.UpdatePurchaseReturn(currentTenantDatabase, {
+    maker,
+    updatePurchaseReturn,
+    purchaseReturnId,
+  }).call();
+  res.status(httpStatus.OK).send({ message: 'Success', updatePrt });
+});
+module.exports = {
+  createPurchaseReturn,
+  findPurchaseReturns,
+  findAllPurchaseReturns,
+  deletePurchaseReturn,
+  updatePurchaseReturns,
+};

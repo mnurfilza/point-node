@@ -54,28 +54,19 @@ const modelPaths = [
   // pos
   '/pos/models/posBill.model.js',
   // purchase
-  '/purchase/models/purchaseDownPayment.model.js',
   '/purchase/models/purchaseInvoice.model.js',
-  '/purchase/models/purchaseInvoiceOther.model.js',
   '/purchase/models/purchaseReturn.model.js',
   '/purchase/models/purchaseReturnItem.model.js',
   '/purchase/models/purchaseInvoiceItem.model.js',
   '/purchase/models/purchaseReceive.model.js',
   // purchase/paymentOrder
-  '/purchase/paymentOrder/models/paymentOrder.model.js',
-  '/purchase/paymentOrder/models/paymentOrderDownPayment.model.js',
-  '/purchase/paymentOrder/models/paymentOrderHistory.model.js',
-  '/purchase/paymentOrder/models/paymentOrderInvoice.model.js',
-  '/purchase/paymentOrder/models/paymentOrderOther.model.js',
-  '/purchase/paymentOrder/models/paymentOrderReturn.model.js',
-  '/purchase/paymentOrder/models/purchaseInvoiceDone.model.js',
-  '/purchase/paymentOrder/models/paymentOrderDetail.model.js',
   // plugin/pinpoint
   '/plugin/pinPoint/salesVisitation.model.js',
   '/plugin/pinPoint/salesVisitationDetail.model.js',
   // shared
   '/shared/form/form.model.js',
   '/shared/settingJournal/settingJournal.model.js',
+  '/shared/userActivities/userActivities.model.js',
   // setting
   '/setting/models/settingLogo.model.js',
   '/setting/models/settingEndNote.model.js',

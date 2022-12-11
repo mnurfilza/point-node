@@ -23,6 +23,8 @@ module.exports = (sequelize, DataTypes, projectCode) => {
         otherKey: 'warehouseId',
         through: models.UserWarehouse,
       });
+
+      this.hasMany(models.UserActivities, { as: 'userActivities', foreignKey: 'userId' });
     }
 
     async isPermitted(requiredPermissions) {
